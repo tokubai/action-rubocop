@@ -113,10 +113,10 @@ class RdjsonFormatter < RuboCop::Formatter::BaseFormatter
   # @param [String] path
   # @return [String]
   def convert_path(path)
-    base_path = Dir.pwd
+    base_path = File.expand_path(Dir.pwd)
 
     begin
-      Pathname.new(File.expand_path(path)).relative_path_from(base_path).to_s
+      File.expand_path(path).sub(base_path, '')
     rescue ArgumentError
       path
     end
