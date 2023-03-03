@@ -90,9 +90,21 @@ else
   BUNDLE_EXEC="bundle exec "
 fi
 
+if [ "${INPUT_USE_CHANGED_FILES}" = "false" ]; then
+  TARGET=""
+else
+  echo '::group:: Target files ...'
+  echo 'Fetching head and base sha'
+  git fetch origin ${INPUT_GITHUB_HEAD_SHA}
+  git fetch origin ${INPUT_GITHUB_BASE_SHA}
+  TARGET=$(git diff --name-only ${INPUT_GITHUB_HEAD_SHA} ${INPUT_GITHUB_BASE_SHA} -- ${INPUT_TARGET_FILE_PATTERN})
+  echo "targets: ${TARGET}"
+  echo '::endgroup::'
+fi
+
 echo '::group:: Running rubocop with reviewdog 🐶 ...'
 # shellcheck disable=SC2086
-${BUNDLE_EXEC}rubocop ${INPUT_RUBOCOP_FLAGS} --require ${GITHUB_ACTION_PATH}/rdjson_formatter/rdjson_formatter.rb --format RdjsonFormatter \
+${BUNDLE_EXEC}rubocop ${INPUT_RUBOCOP_FLAGS} --require ${GITHUB_ACTION_PATH}/rdjson_formatter/rdjson_formatter.rb --format RdjsonFormatter ${TARGET} \
   | reviewdog -f=rdjson \
       -name="${INPUT_TOOL_NAME}" \
       -reporter="${INPUT_REPORTER}" \

@@ -46,6 +46,18 @@ inputs:
   use_bundler:
     description: "Run Rubocop with bundle exec. Default: `false`"
     default: 'false'
+  use_changed_files:
+    description: "Run Rubocop with changed files. Default: `false`"
+    default: 'false'
+  target_file_pattern:
+    description: "Rubocop target patterns for changed files. Default: ``"
+    default: ""
+  github_base_sha:
+    description: 'GITHUB_BASE_SHA'
+    default: ${{ github.base_sha }}
+  github_head_sha:
+    description: 'GITHUB_HEAD_SHA'
+    default: ${{ github.head_sha }}
 runs:
   using: 'composite'
   steps:
@@ -68,6 +80,10 @@ runs:
         INPUT_WORKDIR: ${{ inputs.workdir }}
         INPUT_SKIP_INSTALL: ${{ inputs.skip_install }}
         INPUT_USE_BUNDLER: ${{ inputs.use_bundler }}
+        INPUT_USE_CHANGED_FILES: ${{ inputs.use_changed_files }}
+        INPUT_TARGET_FILE_PATTERN: ${{ inputs.target_file_pattern }}
+        INPUT_GITHUB_BASE_SHA: ${{ inputs.github_base_sha }}
+        INPUT_GITHUB_HEAD_SHA: ${{ inputs.github_head_sha }}
 branding:
   icon: 'check-circle'
   color: 'red'
